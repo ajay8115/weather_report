@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=  , initial-scale=1.0">
+    <title>Document</title>
+
+
+
+</head>
+
+<body>
+
+    <!-- ////////////////////////// CSS //////////////////////////////////// -->
+
+    <style>
+        body {
+            background-image: url(/pexels-fillipe-gomes-2093252.jpg);
+            background-size: cover;
+            height: 100%;
+            background-position: center center;
+            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+        }
+
+        .container {
+
+
+            margin: 90px auto;
+            padding: 5px;
+            width: 380px;
+            text-align: center;
+            background-color: rgb(233 231 231 / 50%);
+            /* background-color : black; */
+
+        }
+
+        .input {
+            margin: 20px 13px;
+            /* width: 200px; */
+            padding: 12px;
+            background-color: rgb(233 231 231 / 80%);
+
+        }
+
+        .detail {
+
+            display: none;
+
+            padding: 17px;
+            background-color: rgb(233 231 231 / 80%);
+            margin: 20px 13px;
+            height: 300px;
+        }
+
+        .TimeAndLocaionInfo>*,
+        .TempInfo>* {
+            padding: 10px;
+
+        }
+
+        .search {
+
+            width: 250px;
+            height: 34px;
+            font-weight: bold;
+            border: none;
+            outline: none;
+            color: blue;
+            background-color: rgb(233 231 231);
+            ;
+            font-size: 1.2rem;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .search:focus {
+            background-color: white;
+        }
+
+        .TimeAndLocaionInfo {
+
+            font-size: 20px;
+
+        }
+
+        .TempInfo {
+
+            margin-top: 15px;
+        }
+
+        #temp {
+
+            font-size: 45px;
+            font-weight: bold;
+            text-shadow: 2px 3px red;
+        }
+
+        #img {
+            font-size: 40px;
+        }
+    </style>
+
+    <!-- ////////////////////////////////////// Html  ////////////////////////////////////////// -->
+
+    <div class="container">
+
+        <div class="input">
+            <input type="text" id="inputBox" class="search" placeholder="Enter City Name">
+        </div>
+
+        <div class="detail">
+
+            <div class="TimeAndLocaionInfo">
+                <div id="location"> lucknow , utterpradesh</div>
+                <div id="date">12/09/2001 </div>
+
+            </div>
+
+            <div class="TempInfo">
+                <div id="temp">12&degC</div>
+                <div id="mnANDmx">000&degC &nbsp( mx ) / 34&degC &nbsp( min ) </div>
+                <div id="weatherType">cloud</div>
+                <div id="img"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ///////////////////////// JavaScript ///////////////////////////////////////////////////////// -->
+
+
+    <script>
+        const weatherAPI = {
+            key: "696a12050eaa4b732efc74248b90279c",
+            url: "https://api.openweathermap.org/data/2.5/weather"
+        }
+
+
+        const searchItem = document.getElementById('inputBox');
+        searchItem.addEventListener('keypress', (event) => {
+
+            if (event.keyCode == 13) {
+                console.log(searchItem.value);
+                getWeatherReport(searchItem.value);
+
+            }
+        })
+
+
+        function getWeatherReport(city) {
+
+            fetch(weatherAPI.url + '?q=' + city + '&appid=' + weatherAPI.key + '&units=metric')
+                .then(weather => {
+                    return weather.json();
+
+                }).then(showReport);
+        }
+        function showReport(weather) {
+            console.log(weather);
+            if (weather.cod != '404')
+                document.querySelector('.detail').style.display = "block";
+            else
+                document.querySelector('.detail').style.display = "none";
+
+            document.getElementById('location').innerHTML = (weather.name) + '&nbsp , &nbsp' + (weather.sys.country);
+            document.getElementById('temp').innerHTML = (Math.round(weather.main.temp)) + '&degC';
+            document.getElementById('weatherType').innerHTML = weather.weather[0].main;
+            document.getElementById('mnANDmx').innerHTML = (Math.floor(weather.main.temp_max)) + '&degC &nbsp( min ) &nbsp / &nbsp' + (Math.ceil(weather.main.temp_min)) + '&degC &nbsp( max ) ';
+            dateManage();
+            backgroundChanger(weather.weather[0].main);
+        }
+        function dateManage() {
+
+            let date = new Date();
+            let days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+            let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+            let year = date.getFullYear();
+            let month = months[date.getMonth()];
+            let d = date.getDate();
+            let day = days[date.getDay()];
+
+            document.getElementById('date').innerHTML = d + ' ' + month + ' ( ' + day + ' )   ,' + year;
+        }
+        function backgroundChanger(Type) {
+
+            if (Type == 'Clear') {
+                document.body.style.backgroundImage = "url('/images/clear.jpg')";
+                document.getElementById('img').innerHTML = '☀';
+
+
+            } else if (Type == 'Clouds') {
+
+                document.body.style.backgroundImage = "url('/images/cloud.jpg')";
+                document.getElementById('img').innerHTML = '🌥';
+
+            } else if (Type == 'Haze') {
+
+                document.body.style.backgroundImage = "url('/images/cloud.jpg')";
+                document.getElementById('img').innerHTML = '🌫';
+
+            } else if (Type == 'Rain') {
+
+                document.body.style.backgroundImage = "url('/images/rain.jpg')";
+                document.getElementById('img').innerHTML = '🌧';
+
+            } else if (Type == 'Snow') {
+
+                document.body.style.backgroundImage = "url('/images/snow.jpg')";
+                document.getElementById('img').innerHTML = '☃️';
+
+            } else if (Type == 'Thunderstorm') {
+
+                document.body.style.backgroundImage = "url('/images/thunderstorm.jpg')";
+                document.getElementById('img').innerHTML = '⛈';
+
+            }
+        }
+
+
+    </script>
+</body>
+
+</html>
